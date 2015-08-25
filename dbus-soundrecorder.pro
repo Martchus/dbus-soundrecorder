@@ -1,4 +1,7 @@
 projectname = dbus-soundrecorder
+appname = "D-Bus Sound Recorder"
+appauthor = Martchus
+appurl = "https://github.com/$${appauthor}/$${projectname}"
 VERSION = 1.0.0
 
 # include ../../common.pri when building as part of a subdirs project; otherwise include general.pri
@@ -15,10 +18,12 @@ CONFIG += console
 QT += core dbus
 
 SOURCES += main.cpp \
-    playerwatcher.cpp
+    playerwatcher.cpp \
+    ffmpeglauncher.cpp
 
 HEADERS += \
-    playerwatcher.h
+    playerwatcher.h \
+    ffmpeglauncher.h
 
 DBUS_INTERFACES += \
     org.freedesktop.DBus.Properties.xml \
