@@ -1,11 +1,10 @@
 # dbus-soundrecorder
-Records sound from Pulse Audio using ffmpeg.
-
-Uses D-Bus to determine current song, album, artist and other meta data
+Records sound from Pulse Audio with ffmpeg while watching D-Bus to
+determine tracks, song title, album, artist and other meta data
 provided by the media player application via MPRIS D-Bus service.
 
-When the next song start, the recorder automatically starts a new file
-and sets available meta data.
+When the next song start, the recorder automatically starts recording
+a new file and sets available meta data.
 
 ## Usage
 ```
