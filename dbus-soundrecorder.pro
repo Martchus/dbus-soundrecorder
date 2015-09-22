@@ -2,6 +2,7 @@ projectname = dbus-soundrecorder
 appname = "D-Bus Sound Recorder"
 appauthor = Martchus
 appurl = "https://github.com/$${appauthor}/$${projectname}"
+QMAKE_TARGET_DESCRIPTION = "Records sound from Pulse Audio with ffmpeg while watching D-Bus to determine tracks and meta information."
 VERSION = 1.0.0
 
 # include ../../common.pri when building as part of a subdirs project; otherwise include general.pri
