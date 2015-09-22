@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
         parser.parseArgs(argc, argv);
     } catch (const Failure &e) {
         cerr << "Unable to parse arguments: " << e.what() << endl;
-        return 2;
+        return 1;
     }
     try {
         if(recordArg.isPresent()) {
@@ -80,9 +80,12 @@ int main(int argc, char *argv[])
             }
             // enter app loop
             return app.exec();
+        } else {
+            cerr << "No operation specified." << endl;
+            return 2;
         }
-
     } catch(const runtime_error &e) {
         cerr << "Fatal error: " << e.what() << endl;
+        return 3;
     }
 }

@@ -92,21 +92,20 @@ void FfmpegLauncher::nextSong()
                 infoIni.parse(infoFile);
                 // read length scope, only possible if track number known because the track number is used for mapping
                 if(m_watcher.trackNumber()) {
-                    try {
-                        const auto &lengthScope = infoIni.data().at("length");
-                        for(const auto &entry : lengthScope) {
-                            try {
-                                if(stringToNumber<unsigned int>(entry.first) == m_watcher.trackNumber()) {
-                                    // length entry for this track
-                                    length = QString::fromLocal8Bit(entry.second.data());
-                                    break;
+                    for(auto &scope : infoIni.data()) {
+                        if(scope.first == "length") {
+                            for(const auto &entry : scope.second) {
+                                try {
+                                    if(stringToNumber<unsigned int>(entry.first) == m_watcher.trackNumber()) {
+                                        // length entry for this track
+                                        length = QString::fromLocal8Bit(entry.second.data());
+                                        break;
+                                    }
+                                } catch( const ConversionException &) {
+                                    cerr << "Warning: Ignoring non-numeric key \"" << entry.first << "\" in info.ini." << endl;
                                 }
-                            } catch( const ConversionException &) {
-                                cerr << "Warning: Ignoring non-numeric key \"" << entry.first << "\" in info.ini." << endl;
                             }
                         }
-                    } catch(const out_of_range &) {
-                        // no length for the current track specified
                     }
                 }
             } catch(const ios_base::failure &) {
