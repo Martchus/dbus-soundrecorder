@@ -3,7 +3,7 @@ Records sound from Pulse Audio with ffmpeg while watching D-Bus to
 determine tracks, song title, album, artist and other meta data
 provided by the media player application via MPRIS D-Bus service.
 
-When the next song start, the recorder automatically starts recording
+When the next song starts, the recorder automatically starts recording
 a new file and sets available meta data.
 
 ## Usage
