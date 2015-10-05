@@ -62,14 +62,15 @@ void FfmpegLauncher::nextSong()
         // determine output file, create target directory
         static const QString miscCategory(QStringLiteral("misc"));
         static const QString unknownTitle(QStringLiteral("unknown track"));
-        QDir targetDir(QStringLiteral("%1/%2").arg(m_watcher.artist().isEmpty() ? miscCategory : m_watcher.artist(), m_watcher.artist().isEmpty() ? miscCategory : m_watcher.album()));
-        if(!m_targetDir.mkpath(targetDir.path())) {
-            cerr << "Error: Can not create target directory: " << targetDir.absolutePath() << endl;
+        const auto targetDirPath = QStringLiteral("%1/%2").arg(m_watcher.artist().isEmpty() ? miscCategory : m_watcher.artist(), m_watcher.artist().isEmpty() ? miscCategory : m_watcher.album());
+        if(!m_targetDir.mkpath(targetDirPath)) {
+            cerr << "Error: Can not create target directory: " << targetDirPath << endl;
             return;
         }
+        QDir targetDir(m_targetDir);
+        targetDir.cd(targetDirPath);
         // determine track number
-        QString number;
-        QString length;
+        QString number, length;
         if(m_watcher.trackNumber()) {
             if(m_watcher.diskNumber()) {
                 number = QStringLiteral("%2-%1").arg(m_watcher.trackNumber(), 2, 10, QLatin1Char('0')).arg(m_watcher.diskNumber());
@@ -119,7 +120,7 @@ void FfmpegLauncher::nextSong()
             ++count;
             targetName = QStringLiteral("%3%1 (%4)%2").arg(m_watcher.title().isEmpty() ? unknownTitle : m_watcher.title(), m_targetExtension, number).arg(count);
         }
-        QString targetPath = targetDir.absoluteFilePath(targetName);
+        auto targetPath = targetDir.absoluteFilePath(targetName);
         // set input device
         QStringList args;
         args << QStringLiteral("-f");
