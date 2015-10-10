@@ -24,7 +24,7 @@ In any case, you should ensure that the media player uses the sink (eg. using pa
 
 Then start the recorder. You need to specify the media player application and the sink:
 ```
-dbus-soundrecorder record -a vlc -s virtual1.monitor -o "-c:a libfdk_aac -vbr 4 -ar 44100"
+dbus-soundrecorder record -a vlc -s virtual1.monitor -i "-sample_rate 44100" -o "-c:a libfdk_aac -vbr 4"
 ```
 As you can see, it is also possible to specify options for ffmpeg. However input sink,
 output file and meta data are provided by the recorder and shouldn't be specified.
