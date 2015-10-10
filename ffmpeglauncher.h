@@ -16,13 +16,15 @@ public:
     explicit FfmpegLauncher(PlayerWatcher &watcher, QObject *parent = nullptr);
 
     void setSink(const QString &sinkName);
-    void setFfmpegBinary(const QString &path);
-    void setFfmpegOptions(const QString &options);
+    void setFFmpegInputOptions(const QString &options);
+    void setFFmpegBinary(const QString &path);
+    void setFFmpegOptions(const QString &options);
     void setTargetDir(const QString &path);
     void setTargetExtension(const QString &extension);
 
 private slots:
     void nextSong();
+    void stopFfmpeg();
     void ffmpegStarted();
     void ffmpegError();
     void ffmpegFinished(int exitCode);
@@ -30,6 +32,7 @@ private slots:
 private:
     PlayerWatcher &m_watcher;
     QString m_sink;
+    QStringList m_inputOptions;
     QStringList m_options;
     QDir m_targetDir;
     QString m_targetExtension;
@@ -41,12 +44,17 @@ inline void FfmpegLauncher::setSink(const QString &sinkName)
     m_sink = sinkName;
 }
 
-inline void FfmpegLauncher::setFfmpegBinary(const QString &path)
+inline void FfmpegLauncher::setFFmpegInputOptions(const QString &options)
+{
+    m_inputOptions = options.split(QChar(' '), QString::SkipEmptyParts);
+}
+
+inline void FfmpegLauncher::setFFmpegBinary(const QString &path)
 {
     m_ffmpeg->setProgram(path);
 }
 
-inline void FfmpegLauncher::setFfmpegOptions(const QString &options)
+inline void FfmpegLauncher::setFFmpegOptions(const QString &options)
 {
     m_options = options.split(QChar(' '), QString::SkipEmptyParts);
 }

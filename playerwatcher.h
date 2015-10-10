@@ -1,6 +1,8 @@
 #ifndef PLAYERWATCHER_H
 #define PLAYERWATCHER_H
 
+#include <c++utilities/chrono/timespan.h>
+
 #include <QObject>
 
 QT_FORWARD_DECLARE_CLASS(QDBusServiceWatcher)
@@ -14,7 +16,7 @@ class PlayerWatcher : public QObject
 {
     Q_OBJECT
 public:
-    explicit PlayerWatcher(const QString &appName, QObject *parent = nullptr);
+    explicit PlayerWatcher(const QString &appName, bool ignorePlaybackStatus = false, QObject *parent = nullptr);
 
     void play();
     void stop();
@@ -22,6 +24,8 @@ public:
     void playPause();
 
     bool isPlaying() const;
+    bool isPlaybackStatusIgnored() const;
+    bool isAd() const;
     const QString &title() const;
     const QString &album() const;
     const QString &artist() const;
@@ -29,7 +33,8 @@ public:
     const QString &genre() const;
     unsigned int trackNumber() const;
     unsigned int diskNumber() const;
-    unsigned long long length() const;
+    ChronoUtilities::TimeSpan length() const;
+    void setSilent(bool silent);
 
 signals:
     void nextSong();
@@ -39,14 +44,18 @@ signals:
 private slots:
     void serviceOwnerChanged(const QString &service, const QString &oldOwner, const QString &newOwner);
     void propertiesChanged();
+    void notificationReceived();
     void seeked(qlonglong pos);
 
 private:
-    QString m_service;
-    QDBusServiceWatcher *m_serviceWatcher;
+    QString m_mediaPlayerInterfaceName;
+    QDBusServiceWatcher *m_mediaPlayerServiceWatcher;
+    QString m_notifyInterfaceName;
+    QDBusServiceWatcher *m_notifyServiceWatcher;
     OrgFreedesktopDBusPropertiesInterface *m_propertiesInterface;
     OrgMprisMediaPlayer2PlayerInterface *m_playerInterface;
     bool m_isPlaying;
+    bool m_isAd;
     QString m_title;
     QString m_album;
     QString m_artist;
@@ -54,12 +63,24 @@ private:
     QString m_genre;
     unsigned int m_trackNumber;
     unsigned int m_diskNumber;
-    unsigned long long m_length;
+    ChronoUtilities::TimeSpan m_length;
+    bool m_silent;
+    bool m_ignorePlaybackStatus;
 };
 
 inline bool PlayerWatcher::isPlaying() const
 {
     return m_isPlaying;
+}
+
+inline bool PlayerWatcher::isPlaybackStatusIgnored() const
+{
+    return m_ignorePlaybackStatus;
+}
+
+inline bool PlayerWatcher::isAd() const
+{
+    return m_isAd;
 }
 
 inline const QString &PlayerWatcher::title() const
@@ -97,9 +118,14 @@ inline unsigned int PlayerWatcher::diskNumber() const
     return m_diskNumber;
 }
 
-inline unsigned long long PlayerWatcher::length() const
+inline ChronoUtilities::TimeSpan PlayerWatcher::length() const
 {
     return m_length;
+}
+
+inline void PlayerWatcher::setSilent(bool silent)
+{
+    m_silent = silent;
 }
 
 }

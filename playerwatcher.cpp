@@ -9,6 +9,7 @@
 #include <iostream>
 
 using namespace std;
+using namespace ChronoUtilities;
 
 namespace DBusSoundRecorder {
 
@@ -18,18 +19,30 @@ inline ostream &operator <<(ostream &stream, const QString &str)
     return stream;
 }
 
-PlayerWatcher::PlayerWatcher(const QString &appName, QObject *parent) :
+PlayerWatcher::PlayerWatcher(const QString &appName, bool ignorePlaybackStatus, QObject *parent) :
     QObject(parent),
-    m_service(QStringLiteral("org.mpris.MediaPlayer2.%1").arg(appName)),
-    m_serviceWatcher(new QDBusServiceWatcher(m_service, QDBusConnection::sessionBus(), QDBusServiceWatcher::WatchForOwnerChange, this)),
-    m_propertiesInterface(new OrgFreedesktopDBusPropertiesInterface(m_service, QStringLiteral("/org/mpris/MediaPlayer2"), QDBusConnection::sessionBus(), this)),
-    m_playerInterface(new OrgMprisMediaPlayer2PlayerInterface(m_service, QStringLiteral("/org/mpris/MediaPlayer2"), QDBusConnection::sessionBus(), this)),
+    m_mediaPlayerInterfaceName(QStringLiteral("org.mpris.MediaPlayer2.%1").arg(appName)),
+    m_mediaPlayerServiceWatcher(new QDBusServiceWatcher(m_mediaPlayerInterfaceName, QDBusConnection::sessionBus(), QDBusServiceWatcher::WatchForOwnerChange, this)),
+    m_propertiesInterface(new OrgFreedesktopDBusPropertiesInterface(m_mediaPlayerInterfaceName, QStringLiteral("/org/mpris/MediaPlayer2"), QDBusConnection::sessionBus(), this)),
+    m_playerInterface(new OrgMprisMediaPlayer2PlayerInterface(m_mediaPlayerInterfaceName, QStringLiteral("/org/mpris/MediaPlayer2"), QDBusConnection::sessionBus(), this)),
     m_isPlaying(false),
+    m_isAd(false),
     m_trackNumber(0),
-    m_diskNumber(0)
+    m_diskNumber(0),
+    m_silent(false),
+    m_ignorePlaybackStatus(ignorePlaybackStatus)
 {
-    connect(m_serviceWatcher, &QDBusServiceWatcher::serviceOwnerChanged, this, &PlayerWatcher::serviceOwnerChanged);
-    connect(m_propertiesInterface, &OrgFreedesktopDBusPropertiesInterface::PropertiesChanged, this, &PlayerWatcher::propertiesChanged);
+    if(!connect(m_mediaPlayerServiceWatcher, &QDBusServiceWatcher::serviceOwnerChanged, this, &PlayerWatcher::serviceOwnerChanged)) {
+        cout << "Warning: Unable to connect \"serviceOwnerChanged\" signal of service watcher." << endl;
+    }
+    // The code below does not work anymore with the newest version of Spotify.
+    //if(!connect(m_propertiesInterface, &OrgFreedesktopDBusPropertiesInterface::PropertiesChanged, this, &PlayerWatcher::propertiesChanged)) {
+    //    cout << "Warning: Unable to connect \"PropertiesChanged\" signal of properties interface." << endl;
+    //}
+    // However, the following works:
+    if(!QDBusConnection::sessionBus().connect(m_mediaPlayerInterfaceName, QStringLiteral("/org/mpris/MediaPlayer2"), QStringLiteral("org.freedesktop.DBus.Properties"), QStringLiteral("PropertiesChanged"), this, SLOT(propertiesChanged()))) {
+        cout << "Warning: Unable to connect \"PropertiesChanged\" signal of properties interface." << endl;
+    }
     propertiesChanged();
 }
 
@@ -66,15 +79,22 @@ void PlayerWatcher::serviceOwnerChanged(const QString &service, const QString &o
 void PlayerWatcher::propertiesChanged()
 {
     // get meta data
-    if(!m_playerInterface->playbackStatus().compare(QLatin1String("playing"), Qt::CaseInsensitive)) {
+    QVariantMap metadata = m_playerInterface->metadata();
+    m_isAd = metadata.value(QStringLiteral("mpris:trackid")).toString().startsWith(QLatin1String("spotify:ad"));
+    QString title = metadata.value(QStringLiteral("xesam:title")).toString();
+    QString album = metadata.value(QStringLiteral("xesam:album")).toString();
+    QString artist = metadata.value(QStringLiteral("xesam:artist")).toString();
+    bool isPlaying;
+    if(m_ignorePlaybackStatus) {
+        // determine playback status by checking whether there is a song title
+        isPlaying = !title.isEmpty();
+    } else {
+       isPlaying = !m_playerInterface->playbackStatus().compare(QLatin1String("playing"), Qt::CaseInsensitive);
+    }
+    if(isPlaying) {
         if(!m_isPlaying) {
-            m_isPlaying = true;
             cerr << "Playback started" << endl;
         }
-        QVariantMap metadata = m_playerInterface->metadata();
-        QString title = metadata.value(QStringLiteral("xesam:title")).toString();
-        QString album = metadata.value(QStringLiteral("xesam:album")).toString();
-        QString artist = metadata.value(QStringLiteral("xesam:artist")).toString();
         // use title, album and artist to identify song
         if(m_title != title || m_album != album || m_artist != artist) {
             // next song playing
@@ -92,21 +112,35 @@ void PlayerWatcher::propertiesChanged()
             if(!m_diskNumber) {
                 m_diskNumber = metadata.value(QStringLiteral("xesam:discNumber")).toUInt();
             }
-            m_length = metadata.value(QStringLiteral("xesam:length")).toULongLong();
+            m_length = TimeSpan(metadata.value(QStringLiteral("mpris:length")).toULongLong() * 10);
             // notify
             cerr << "Next song: " << m_title << endl;
-            if(!m_isPlaying) {
+            if(!m_isPlaying && !m_silent) {
+                m_isPlaying = true;
                 emit playbackStarted();
             }
-            emit nextSong();
+            if(!m_silent) {
+                m_isPlaying = true;
+                emit nextSong();
+            }
         } else if(!m_isPlaying) {
-            emit playbackStarted();
+            if(!m_silent) {
+                m_isPlaying = true;
+                emit playbackStarted();
+            }
         }
     } else if(m_isPlaying) {
         m_isPlaying = false;
         cerr << "Playback stopped" << endl;
-        emit playbackStopped();
+        if(!m_silent) {
+            emit playbackStopped();
+        }
     }
+}
+
+void PlayerWatcher::notificationReceived()
+{
+    cout << "It works!" << endl;
 }
 
 void PlayerWatcher::seeked(qlonglong pos)

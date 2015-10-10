@@ -28,6 +28,9 @@ int main(int argc, char *argv[])
     sinkArg.setValueNames({"sink"});
     sinkArg.setRequiredValueCount(1);
     sinkArg.setCombinable(true);
+    Argument ffmpegInputOptions("ffmpeg-input-options", "i", "specifies options for the ffmpeg input device");
+    ffmpegInputOptions.setRequiredValueCount(1);
+    ffmpegInputOptions.setCombinable(true);
     Argument targetDirArg("target-dir", "t", "specifies the target directory");
     targetDirArg.setValueNames({"path"});
     targetDirArg.setRequiredValueCount(1);
@@ -36,6 +39,8 @@ int main(int argc, char *argv[])
     targetExtArg.setValueNames({"extension"});
     targetExtArg.setRequiredValueCount(1);
     targetExtArg.setCombinable(true);
+    Argument ignorePlaybackStatusArg("ignore-playback-status", string(), "ignores the playback status (does not call PlaybackStatus())");
+    ignorePlaybackStatusArg.setCombinable(true);
     Argument ffmpegBinArg("ffmpeg-bin", "f", "specifies the path to the ffmpeg binary");
     ffmpegBinArg.setValueNames({"path"});
     ffmpegBinArg.setRequiredValueCount(1);
@@ -44,7 +49,7 @@ int main(int argc, char *argv[])
     ffmpegOptions.setValueNames({"options"});
     ffmpegOptions.setRequiredValueCount(1);
     ffmpegOptions.setCombinable(true);
-    recordArg.setSecondaryArguments({&applicationArg, &sinkArg, &targetDirArg, &targetExtArg, &ffmpegBinArg, &ffmpegOptions});
+    recordArg.setSecondaryArguments({&applicationArg, &sinkArg, &ffmpegInputOptions, &targetDirArg, &targetExtArg, &ignorePlaybackStatusArg, &ffmpegBinArg, &ffmpegOptions});
     parser.setMainArguments({&recordArg, &helpArg});
     parser.setIgnoreUnknownArguments(false);
     // parse command line arguments
@@ -60,17 +65,20 @@ int main(int argc, char *argv[])
             cerr << "Watching MPRIS service of the specified application \"" << applicationArg.values().front() << "\" ..." << endl;
             // create app loop, player watcher and ffmpeg launcher
             QCoreApplication app(argc, argv);
-            PlayerWatcher watcher(QString::fromLocal8Bit(applicationArg.values().front().data()));
+            PlayerWatcher watcher(QString::fromLocal8Bit(applicationArg.values().front().data()), ignorePlaybackStatusArg.isPresent());
             FfmpegLauncher ffmpeg(watcher);
             // pass specified args to ffmpeg launcher
             if(sinkArg.isPresent()) {
                 ffmpeg.setSink(QString::fromLocal8Bit(sinkArg.values().front().data()));
             }
+            if(ffmpegInputOptions.isPresent()) {
+                ffmpeg.setFFmpegInputOptions(QString::fromLocal8Bit(ffmpegInputOptions.values().front().data()));
+            }
             if(ffmpegBinArg.isPresent()) {
-                ffmpeg.setFfmpegBinary(QString::fromLocal8Bit(ffmpegBinArg.values().front().data()));
+                ffmpeg.setFFmpegBinary(QString::fromLocal8Bit(ffmpegBinArg.values().front().data()));
             }
             if(ffmpegOptions.isPresent()) {
-                ffmpeg.setFfmpegOptions(QString::fromLocal8Bit(ffmpegOptions.values().front().data()));
+                ffmpeg.setFFmpegOptions(QString::fromLocal8Bit(ffmpegOptions.values().front().data()));
             }
             if(targetDirArg.isPresent()) {
                 ffmpeg.setTargetDir(QString::fromLocal8Bit(targetDirArg.values().front().data()));
@@ -80,7 +88,7 @@ int main(int argc, char *argv[])
             }
             // enter app loop
             return app.exec();
-        } else {
+        } else if(!helpArg.isPresent()) {
             cerr << "No operation specified." << endl;
             return 2;
         }
