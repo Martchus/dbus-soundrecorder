@@ -21,6 +21,26 @@ inline ostream &operator <<(ostream &stream, const QString &str)
     return stream;
 }
 
+inline QString validFileName(const QString &text)
+{
+    QString copy(text);
+    copy
+            .replace(QChar('\\'), QLatin1String(" - "))
+            .replace(QChar('/'), QLatin1String(" - "))
+            .replace(QChar('\n'), QString())
+            .replace(QChar('\r'), QString())
+            .replace(QChar('\f'), QString())
+            .replace(QChar('<'), QString())
+            .replace(QChar('>'), QString())
+            .replace(QChar('?'), QString())
+            .replace(QChar('*'), QString())
+            .replace(QChar('!'), QString())
+            .replace(QChar('|'), QString())
+            .replace(QLatin1String(": "), QLatin1String(" - "))
+            .replace(QChar(':'), QChar('-'));
+    return copy;
+}
+
 FfmpegLauncher::FfmpegLauncher(PlayerWatcher &watcher, QObject *parent) :
     QObject(parent),
     m_watcher(watcher),
@@ -64,7 +84,7 @@ void FfmpegLauncher::nextSong()
     // determine output file, create target directory
     static const QString miscCategory(QStringLiteral("misc"));
     static const QString unknownTitle(QStringLiteral("unknown track"));
-    const auto targetDirPath = QStringLiteral("%1/%2").arg(m_watcher.artist().isEmpty() ? miscCategory : m_watcher.artist(), m_watcher.artist().isEmpty() ? miscCategory : m_watcher.album());
+    const auto targetDirPath = QStringLiteral("%1/%2").arg(m_watcher.artist().isEmpty() ? miscCategory : validFileName(m_watcher.artist()), m_watcher.artist().isEmpty() ? miscCategory : validFileName(m_watcher.album()));
     if(!m_targetDir.mkpath(targetDirPath)) {
         cerr << "Error: Can not create target directory: " << targetDirPath << endl;
         return;
@@ -133,7 +153,7 @@ void FfmpegLauncher::nextSong()
         }
     }
     // determine target name/path
-    QString targetName(QStringLiteral("%3%1%2").arg(m_watcher.title().isEmpty() ? unknownTitle : m_watcher.title(), m_targetExtension, number));
+    QString targetName(QStringLiteral("%3%1%2").arg(m_watcher.title().isEmpty() ? unknownTitle : validFileName(m_watcher.title()), m_targetExtension, number));
     unsigned int count = 1;
     while(targetDir.exists(targetName)) {
         ++count;
