@@ -1,3 +1,4 @@
+# meta data
 projectname = dbus-soundrecorder
 appname = "D-Bus Sound Recorder"
 appauthor = Martchus
@@ -12,28 +13,32 @@ VERSION = 1.1.0
     }
 }
 
+# basic configuration: console application
 TEMPLATE = app
-
 CONFIG += console
-
 QT += core dbus
 
-SOURCES += main.cpp \
-    playerwatcher.cpp \
-    ffmpeglauncher.cpp
-
+# add project files
 HEADERS += \
     playerwatcher.h \
     ffmpeglauncher.h
+
+SOURCES += \
+    main.cpp \
+    playerwatcher.cpp \
+    ffmpeglauncher.cpp
 
 DBUS_INTERFACES += \
     org.freedesktop.DBus.Properties.xml \
     org.mpris.MediaPlayer2.xml \
     org.mpris.MediaPlayer2.Player.xml
 
-DISTFILES += \
+OTHER_FILES += \
     README.md \
-    LICENSE
+    LICENSE \
+    CMakeLists.txt \
+    resources/config.h.in \
+    resources/windows.rc.in
 
 # libs and includepath
 CONFIG(debug, debug|release) {
