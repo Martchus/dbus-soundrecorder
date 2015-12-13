@@ -83,7 +83,12 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 # generate DBus interfaces
 qt5_add_dbus_interfaces(SRC_FILES ${DBUS_FILES})
-add_definitions(-DCMAKE_BUILD)
+
+# disable new ABI (can't catch ios_base::failure with new ABI)
+add_definitions(
+    -D_GLIBCXX_USE_CXX11_ABI=0
+    -DCMAKE_BUILD
+)
 
 # executable and linking
 add_executable(${META_PROJECT_NAME} ${HEADER_FILES} ${SRC_FILES} ${RES_FILES} ${WINDOWS_ICON_PATH})
