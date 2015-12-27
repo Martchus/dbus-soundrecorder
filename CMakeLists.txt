@@ -23,7 +23,7 @@ set(META_APP_AUTHOR "Martchus")
 set(META_APP_URL "https://github.com/${META_APP_AUTHOR}/${META_PROJECT_NAME}")
 set(META_APP_DESCRIPTION "Records sound from Pulse Audio with ffmpeg while watching D-Bus to determine tracks and meta information.")
 set(META_VERSION_MAJOR 1)
-set(META_VERSION_MINOR 1)
+set(META_VERSION_MINOR 2)
 set(META_VERSION_PATCH 0)
 
 # stringification of meta data
