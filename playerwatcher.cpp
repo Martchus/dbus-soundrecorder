@@ -1,12 +1,7 @@
 #include "playerwatcher.h"
 
-#ifdef CMAKE_BUILD
-# include "playerinterface.h"
-# include "propertiesinterface.h"
-#else
-# include "player_interface.h"
-# include "properties_interface.h"
-#endif
+#include "playerinterface.h"
+#include "propertiesinterface.h"
 
 #include <QDBusServiceWatcher>
 #include <QDBusConnection>
