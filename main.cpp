@@ -1,10 +1,7 @@
 #include "playerwatcher.h"
 #include "ffmpeglauncher.h"
 
-// include configuration from separate header file when building with CMake
-#ifndef APP_METADATA_AVAIL
 #include "resources/config.h"
-#endif
 
 #include <c++utilities/application/argumentparser.h>
 #include <c++utilities/application/failure.h>
