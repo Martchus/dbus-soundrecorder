@@ -28,11 +28,11 @@ set(META_VERSION_MINOR 2)
 set(META_VERSION_PATCH 1)
 
 # find c++utilities
-find_package(c++utilities REQUIRED)
+find_package(c++utilities 3.3.0 REQUIRED)
 use_cpp_utilities()
 
 # find qtutilities
-find_package(qtutilities REQUIRED)
+find_package(qtutilities 4.0.0 REQUIRED)
 list(APPEND CMAKE_MODULE_PATH ${QT_UTILITIES_MODULE_DIRS})
 
 # include modules to apply configuration
