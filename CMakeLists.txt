@@ -28,7 +28,7 @@ set(META_VERSION_MINOR 2)
 set(META_VERSION_PATCH 1)
 
 # find c++utilities
-find_package(c++utilities 3.3.0 REQUIRED)
+find_package(c++utilities 4.0.0 REQUIRED)
 use_cpp_utilities()
 
 # find qtutilities

@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
     targetExtArg.setValueNames({"extension"});
     targetExtArg.setRequiredValueCount(1);
     targetExtArg.setCombinable(true);
-    Argument ignorePlaybackStatusArg("ignore-playback-status", string(), "ignores the playback status (does not call PlaybackStatus())");
+    Argument ignorePlaybackStatusArg("ignore-playback-status", nullptr, "ignores the playback status (does not call PlaybackStatus())");
     ignorePlaybackStatusArg.setCombinable(true);
     Argument ffmpegBinArg("ffmpeg-bin", "f", "specifies the path to the ffmpeg binary");
     ffmpegBinArg.setValueNames({"path"});
