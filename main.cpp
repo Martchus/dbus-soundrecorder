@@ -53,7 +53,6 @@ int main(int argc, char *argv[])
     ffmpegOptions.setCombinable(true);
     recordArg.setSubArguments({&applicationArg, &sinkArg, &ffmpegInputOptions, &targetDirArg, &targetExtArg, &ignorePlaybackStatusArg, &ffmpegBinArg, &ffmpegOptions});
     parser.setMainArguments({&helpArg, &recordArg});
-    parser.setIgnoreUnknownArguments(false);
     // parse command line arguments
     try {
         parser.parseArgs(argc, argv);
