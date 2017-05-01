@@ -23,6 +23,7 @@ set(DOC_FILES
 
 # meta data
 set(META_PROJECT_NAME dbus-soundrecorder)
+set(META_PROJECT_VARNAME DBUS_SOUNDRECORDER)
 set(META_PROJECT_TYPE application)
 set(META_APP_NAME "D-Bus Sound Recorder")
 set(META_APP_AUTHOR "Martchus")
