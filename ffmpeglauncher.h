@@ -1,16 +1,15 @@
 #ifndef FFMPEGLAUNCHER_H
 #define FFMPEGLAUNCHER_H
 
+#include <QDir>
 #include <QObject>
 #include <QProcess>
-#include <QDir>
 
 namespace DBusSoundRecorder {
 
 class PlayerWatcher;
 
-class FfmpegLauncher : public QObject
-{
+class FfmpegLauncher : public QObject {
     Q_OBJECT
 public:
     explicit FfmpegLauncher(PlayerWatcher &watcher, QObject *parent = nullptr);
@@ -68,7 +67,6 @@ inline void FfmpegLauncher::setTargetExtension(const QString &extension)
 {
     m_targetExtension = extension.startsWith(QChar('.')) ? extension : QStringLiteral(".") + extension;
 }
-
 }
 
 #endif // FFMPEGLAUNCHER_H

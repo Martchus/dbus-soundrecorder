@@ -12,8 +12,7 @@ class OrgMprisMediaPlayer2PlayerInterface;
 
 namespace DBusSoundRecorder {
 
-class PlayerWatcher : public QObject
-{
+class PlayerWatcher : public QObject {
     Q_OBJECT
 public:
     explicit PlayerWatcher(const QString &appName, bool ignorePlaybackStatus = false, QObject *parent = nullptr);
@@ -127,7 +126,6 @@ inline void PlayerWatcher::setSilent(bool silent)
 {
     m_silent = silent;
 }
-
 }
 
 #endif // PLAYERWATCHER_H
