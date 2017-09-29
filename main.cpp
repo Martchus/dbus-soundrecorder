@@ -55,12 +55,7 @@ int main(int argc, char *argv[])
         { &applicationArg, &sinkArg, &ffmpegInputOptions, &targetDirArg, &targetExtArg, &ignorePlaybackStatusArg, &ffmpegBinArg, &ffmpegOptions });
     parser.setMainArguments({ &helpArg, &recordArg });
     // parse command line arguments
-    try {
-        parser.parseArgs(argc, argv);
-    } catch (const Failure &e) {
-        cerr << "Unable to parse arguments: " << e.what() << endl;
-        return 1;
-    }
+    parser.parseArgsOrExit(argc, argv);
     try {
         if (recordArg.isPresent()) {
             // start watching/recording
