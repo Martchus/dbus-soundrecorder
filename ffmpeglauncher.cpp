@@ -2,7 +2,6 @@
 #include "playerwatcher.h"
 
 #include <c++utilities/conversion/stringconversion.h>
-#include <c++utilities/io/catchiofailure.h>
 #include <c++utilities/io/inifile.h>
 
 #include <QStringBuilder>
@@ -149,9 +148,8 @@ void FfmpegLauncher::nextSong()
                     cerr << "Warning: Ignoring unknown section [" << scope.first << "] in info.ini." << endl;
                 }
             }
-        } catch (...) {
-            ::IoUtilities::catchIoFailure();
-            cerr << "Warning: Can't parse info.ini because an IO error occured." << endl;
+        } catch (const std::ios_base::failure &failure) {
+            cerr << "Warning: Can't parse info.ini because an IO error occured: " << failure.what() << endl;
         }
     }
     // determine target name/path
