@@ -32,7 +32,7 @@ public:
     const QString &genre() const;
     unsigned int trackNumber() const;
     unsigned int diskNumber() const;
-    ChronoUtilities::TimeSpan length() const;
+    CppUtilities::TimeSpan length() const;
     void setSilent(bool silent);
 
 signals:
@@ -62,7 +62,7 @@ private:
     QString m_genre;
     unsigned int m_trackNumber;
     unsigned int m_diskNumber;
-    ChronoUtilities::TimeSpan m_length;
+    CppUtilities::TimeSpan m_length;
     bool m_silent;
     bool m_ignorePlaybackStatus;
 };
@@ -117,7 +117,7 @@ inline unsigned int PlayerWatcher::diskNumber() const
     return m_diskNumber;
 }
 
-inline ChronoUtilities::TimeSpan PlayerWatcher::length() const
+inline CppUtilities::TimeSpan PlayerWatcher::length() const
 {
     return m_length;
 }

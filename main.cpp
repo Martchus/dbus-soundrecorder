@@ -11,7 +11,7 @@
 #include <iostream>
 
 using namespace std;
-using namespace ApplicationUtilities;
+using namespace CppUtilities;
 using namespace DBusSoundRecorder;
 
 int main(int argc, char *argv[])
@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
         { &applicationArg, &sinkArg, &ffmpegInputOptions, &targetDirArg, &targetExtArg, &ignorePlaybackStatusArg, &ffmpegBinArg, &ffmpegOptions });
     parser.setMainArguments({ &helpArg, &recordArg });
     // parse command line arguments
-    parser.parseArgsOrExit(argc, argv);
+    parser.parseArgs(argc, argv);
     try {
         if (recordArg.isPresent()) {
             // start watching/recording

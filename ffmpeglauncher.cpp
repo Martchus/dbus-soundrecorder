@@ -10,8 +10,7 @@
 #include <iostream>
 
 using namespace std;
-using namespace IoUtilities;
-using namespace ConversionUtilities;
+using namespace CppUtilities;
 
 namespace DBusSoundRecorder {
 
@@ -53,7 +52,15 @@ FfmpegLauncher::FfmpegLauncher(PlayerWatcher &watcher, QObject *parent)
     connect(&watcher, &PlayerWatcher::nextSong, this, &FfmpegLauncher::nextSong);
     connect(&watcher, &PlayerWatcher::playbackStopped, this, &FfmpegLauncher::stopFfmpeg);
     connect(m_ffmpeg, &QProcess::started, this, &FfmpegLauncher::ffmpegStarted);
-    connect(m_ffmpeg, static_cast<void (QProcess::*)(QProcess::ProcessError)>(&QProcess::error), this, &FfmpegLauncher::ffmpegError);
+    connect(m_ffmpeg,
+#if QT_DEPRECATED_SINCE(5,6)
+            static_cast<void (QProcess::*)(QProcess::ProcessError)>(
+#endif
+                &QProcess::error
+#if QT_DEPRECATED_SINCE(5,6)
+                )
+#endif
+            , this, &FfmpegLauncher::ffmpegError);
     connect(m_ffmpeg, static_cast<void (QProcess::*)(int)>(&QProcess::finished), this, &FfmpegLauncher::ffmpegFinished);
     m_ffmpeg->setProgram(QStringLiteral("ffmpeg"));
     m_ffmpeg->setProcessChannelMode(QProcess::ForwardedChannels);

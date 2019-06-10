@@ -9,7 +9,7 @@
 #include <iostream>
 
 using namespace std;
-using namespace ChronoUtilities;
+using namespace CppUtilities;
 
 namespace DBusSoundRecorder {
 
