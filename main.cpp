@@ -4,7 +4,6 @@
 #include "resources/config.h"
 
 #include <c++utilities/application/argumentparser.h>
-#include <c++utilities/application/failure.h>
 
 #include <QCoreApplication>
 
