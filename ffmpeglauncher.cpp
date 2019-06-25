@@ -53,11 +53,11 @@ FfmpegLauncher::FfmpegLauncher(PlayerWatcher &watcher, QObject *parent)
     connect(&watcher, &PlayerWatcher::playbackStopped, this, &FfmpegLauncher::stopFfmpeg);
     connect(m_ffmpeg, &QProcess::started, this, &FfmpegLauncher::ffmpegStarted);
     connect(m_ffmpeg,
-#if QT_DEPRECATED_SINCE(5,6)
+#if QT_VERSION < QT_VERSION_CHECK(5, 6, 0) || QT_DEPRECATED_SINCE(5, 6)
             static_cast<void (QProcess::*)(QProcess::ProcessError)>(
 #endif
                 &QProcess::error
-#if QT_DEPRECATED_SINCE(5,6)
+#if QT_VERSION < QT_VERSION_CHECK(5, 6, 0) || QT_DEPRECATED_SINCE(5, 6)
                 )
 #endif
             , this, &FfmpegLauncher::ffmpegError);
