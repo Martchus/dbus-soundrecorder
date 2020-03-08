@@ -40,7 +40,7 @@ signals:
     void playbackStarted();
     void playbackStopped();
 
-private slots:
+private Q_SLOTS:
     void serviceOwnerChanged(const QString &service, const QString &oldOwner, const QString &newOwner);
     void propertiesChanged();
     void notificationReceived();

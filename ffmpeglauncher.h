@@ -21,7 +21,7 @@ public:
     void setTargetDir(const QString &path);
     void setTargetExtension(const QString &extension);
 
-private slots:
+private Q_SLOTS:
     void nextSong();
     void stopFfmpeg();
     void ffmpegStarted();
