@@ -61,7 +61,7 @@ FfmpegLauncher::FfmpegLauncher(PlayerWatcher &watcher, QObject *parent)
                 )
 #endif
             , this, &FfmpegLauncher::ffmpegError);
-    connect(m_ffmpeg, static_cast<void (QProcess::*)(int)>(&QProcess::finished), this, &FfmpegLauncher::ffmpegFinished);
+    connect(m_ffmpeg, static_cast<void (QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished), this, &FfmpegLauncher::ffmpegFinished);
     m_ffmpeg->setProgram(QStringLiteral("ffmpeg"));
     m_ffmpeg->setProcessChannelMode(QProcess::ForwardedChannels);
 }
