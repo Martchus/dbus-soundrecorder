@@ -1,5 +1,18 @@
 cmake_minimum_required(VERSION 3.1.0 FATAL_ERROR)
 
+# set meta data
+project(dbus-soundrecorder)
+set(META_PROJECT_NAME ${PROJECT_NAME})
+set(META_PROJECT_VARNAME DBUS_SOUNDRECORDER)
+set(META_PROJECT_TYPE application)
+set(META_APP_NAME "D-Bus Sound Recorder")
+set(META_APP_AUTHOR "Martchus")
+set(META_APP_URL "https://github.com/${META_APP_AUTHOR}/${META_PROJECT_NAME}")
+set(META_APP_DESCRIPTION "Records sound from Pulse Audio with ffmpeg while watching D-Bus to determine tracks and meta information")
+set(META_VERSION_MAJOR 1)
+set(META_VERSION_MINOR 2)
+set(META_VERSION_PATCH 4)
+
 # add project files
 set(HEADER_FILES
     ffmpeglauncher.h
@@ -20,18 +33,6 @@ set(DBUS_FILES
 set(DOC_FILES
     README.md
 )
-
-# meta data
-set(META_PROJECT_NAME dbus-soundrecorder)
-set(META_PROJECT_VARNAME DBUS_SOUNDRECORDER)
-set(META_PROJECT_TYPE application)
-set(META_APP_NAME "D-Bus Sound Recorder")
-set(META_APP_AUTHOR "Martchus")
-set(META_APP_URL "https://github.com/${META_APP_AUTHOR}/${META_PROJECT_NAME}")
-set(META_APP_DESCRIPTION "Records sound from Pulse Audio with ffmpeg while watching D-Bus to determine tracks and meta information")
-set(META_VERSION_MAJOR 1)
-set(META_VERSION_MINOR 2)
-set(META_VERSION_PATCH 3)
 
 # find c++utilities
 set(CONFIGURATION_PACKAGE_SUFFIX "" CACHE STRING "sets the suffix for find_package() calls to packages configured via c++utilities")
