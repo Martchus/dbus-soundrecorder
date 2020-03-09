@@ -35,7 +35,7 @@ public:
     CppUtilities::TimeSpan length() const;
     void setSilent(bool silent);
 
-signals:
+Q_SIGNALS:
     void nextSong();
     void playbackStarted();
     void playbackStopped();
