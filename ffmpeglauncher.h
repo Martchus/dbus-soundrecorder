@@ -67,6 +67,6 @@ inline void FfmpegLauncher::setTargetExtension(const QString &extension)
 {
     m_targetExtension = extension.startsWith(QChar('.')) ? extension : QStringLiteral(".") + extension;
 }
-}
+} // namespace DBusSoundRecorder
 
 #endif // FFMPEGLAUNCHER_H

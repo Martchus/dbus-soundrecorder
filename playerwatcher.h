@@ -126,6 +126,6 @@ inline void PlayerWatcher::setSilent(bool silent)
 {
     m_silent = silent;
 }
-}
+} // namespace DBusSoundRecorder
 
 #endif // PLAYERWATCHER_H

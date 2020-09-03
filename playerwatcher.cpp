@@ -151,4 +151,4 @@ void PlayerWatcher::seeked(qlonglong pos)
 {
     cerr << "Seeked: " << pos << endl;
 }
-}
+} // namespace DBusSoundRecorder

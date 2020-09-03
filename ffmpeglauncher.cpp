@@ -241,4 +241,4 @@ void FfmpegLauncher::ffmpegFinished(int exitCode)
 {
     cerr << "FFmpeg finished with exit code " << exitCode << endl;
 }
-}
+} // namespace DBusSoundRecorder
