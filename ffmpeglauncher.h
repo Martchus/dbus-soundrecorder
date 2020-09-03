@@ -45,7 +45,7 @@ inline void FfmpegLauncher::setSink(const QString &sinkName)
 
 inline void FfmpegLauncher::setFFmpegInputOptions(const QString &options)
 {
-    m_inputOptions = options.split(QChar(' '), QString::SkipEmptyParts);
+    m_inputOptions = options.split(QChar(' '), Qt::SkipEmptyParts);
 }
 
 inline void FfmpegLauncher::setFFmpegBinary(const QString &path)
@@ -55,7 +55,7 @@ inline void FfmpegLauncher::setFFmpegBinary(const QString &path)
 
 inline void FfmpegLauncher::setFFmpegOptions(const QString &options)
 {
-    m_options = options.split(QChar(' '), QString::SkipEmptyParts);
+    m_options = options.split(QChar(' '), Qt::SkipEmptyParts);
 }
 
 inline void FfmpegLauncher::setTargetDir(const QString &path)

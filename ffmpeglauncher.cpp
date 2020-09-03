@@ -53,14 +53,15 @@ FfmpegLauncher::FfmpegLauncher(PlayerWatcher &watcher, QObject *parent)
     connect(&watcher, &PlayerWatcher::playbackStopped, this, &FfmpegLauncher::stopFfmpeg);
     connect(m_ffmpeg, &QProcess::started, this, &FfmpegLauncher::ffmpegStarted);
     connect(m_ffmpeg,
-#if QT_VERSION < QT_VERSION_CHECK(5, 6, 0) || QT_DEPRECATED_SINCE(5, 6)
-            static_cast<void (QProcess::*)(QProcess::ProcessError)>(
+#if QT_VERSION < QT_VERSION_CHECK(5, 6, 0) || (QT_DEPRECATED_SINCE(5, 6) && QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+        static_cast<void (QProcess::*)(QProcess::ProcessError)>(
 #endif
-                &QProcess::error
-#if QT_VERSION < QT_VERSION_CHECK(5, 6, 0) || QT_DEPRECATED_SINCE(5, 6)
-                )
+            &QProcess::error
+#if QT_VERSION < QT_VERSION_CHECK(5, 6, 0) || (QT_DEPRECATED_SINCE(5, 6) && QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+            )
 #endif
-            , this, &FfmpegLauncher::ffmpegError);
+            ,
+        this, &FfmpegLauncher::ffmpegError);
     connect(m_ffmpeg, static_cast<void (QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished), this, &FfmpegLauncher::ffmpegFinished);
     m_ffmpeg->setProgram(QStringLiteral("ffmpeg"));
     m_ffmpeg->setProcessChannelMode(QProcess::ForwardedChannels);
