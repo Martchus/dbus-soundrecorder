@@ -38,11 +38,11 @@ PlayerWatcher::PlayerWatcher(const QString &appName, bool ignorePlaybackStatus, 
     if (!connect(m_mediaPlayerServiceWatcher, &QDBusServiceWatcher::serviceOwnerChanged, this, &PlayerWatcher::serviceOwnerChanged)) {
         cout << "Warning: Unable to connect \"serviceOwnerChanged\" signal of service watcher." << endl;
     }
-    // The code below does not work anymore with the newest version of Spotify.
+    // The code below might not work with some players:
     //if(!connect(m_propertiesInterface, &OrgFreedesktopDBusPropertiesInterface::PropertiesChanged, this, &PlayerWatcher::propertiesChanged)) {
     //    cout << "Warning: Unable to connect \"PropertiesChanged\" signal of properties interface." << endl;
     //}
-    // However, the following works:
+    // However, the following seems to work always:
     if (!QDBusConnection::sessionBus().connect(m_mediaPlayerInterfaceName, QStringLiteral("/org/mpris/MediaPlayer2"),
             QStringLiteral("org.freedesktop.DBus.Properties"), QStringLiteral("PropertiesChanged"), this, SLOT(propertiesChanged()))) {
         cout << "Warning: Unable to connect \"PropertiesChanged\" signal of properties interface." << endl;

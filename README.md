@@ -43,6 +43,6 @@ should start ffmpeg automatically.
 ## Build instructions
 The application depends on the c++utilities library. It is built in the same way as c++utilities.
 
-The following Qt modules are requried (version 5.6 or higher): core dbus
+The following Qt modules are required (version 5.6 or higher): core dbus
 
 

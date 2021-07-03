@@ -157,7 +157,7 @@ void FfmpegLauncher::nextSong()
                 }
             }
         } catch (const std::ios_base::failure &failure) {
-            cerr << "Warning: Can't parse info.ini because an IO error occured: " << failure.what() << endl;
+            cerr << "Warning: Can't parse info.ini because an IO error occurred: " << failure.what() << endl;
         }
     }
     // determine target name/path
