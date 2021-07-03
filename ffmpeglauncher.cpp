@@ -235,7 +235,7 @@ void FfmpegLauncher::ffmpegStarted()
 
 void FfmpegLauncher::ffmpegError()
 {
-    cerr << "Failed to start ffmpeg: " << m_ffmpeg->errorString();
+    cerr << "Failed to start ffmpeg: " << m_ffmpeg->errorString() << '\n';
 }
 
 void FfmpegLauncher::ffmpegFinished(int exitCode)
