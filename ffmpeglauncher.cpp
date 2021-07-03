@@ -240,6 +240,6 @@ void FfmpegLauncher::ffmpegError()
 
 void FfmpegLauncher::ffmpegFinished(int exitCode)
 {
-    cerr << "FFmpeg finished with exit code " << exitCode << endl;
+    cerr << "FFmpeg finished with exit code " << exitCode << '\n';
 }
 } // namespace DBusSoundRecorder

@@ -15,8 +15,7 @@ namespace DBusSoundRecorder {
 
 inline ostream &operator<<(ostream &stream, const QString &str)
 {
-    stream << str.toLocal8Bit().data();
-    return stream;
+    return stream << str.toLocal8Bit().data();
 }
 
 PlayerWatcher::PlayerWatcher(const QString &appName, bool ignorePlaybackStatus, QObject *parent)
