@@ -45,4 +45,5 @@ The application depends on the c++utilities library. It is built in the same way
 
 The following Qt modules are required (version 5.6 or higher): core dbus
 
-
+## License
+All code is licensed under [GPL-2-or-later](LICENSE).
