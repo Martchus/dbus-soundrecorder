@@ -48,8 +48,10 @@ FfmpegLauncher::FfmpegLauncher(PlayerWatcher &watcher, QObject *parent)
     , m_targetDir(QStringLiteral("."))
     , m_targetExtension(QStringLiteral(".m4a"))
     , m_ffmpeg(new QProcess(this))
+    , m_keepGoing(false)
 {
     connect(&watcher, &PlayerWatcher::nextSong, this, &FfmpegLauncher::nextSong);
+    connect(&watcher, &PlayerWatcher::songResumed, this, &FfmpegLauncher::songResumed);
     connect(&watcher, &PlayerWatcher::playbackStopped, this, &FfmpegLauncher::stopFfmpeg);
     connect(m_ffmpeg, &QProcess::started, this, &FfmpegLauncher::ffmpegStarted);
     connect(m_ffmpeg,
@@ -81,13 +83,17 @@ void FfmpegLauncher::nextSong()
     if (m_watcher.isAd()) {
         return;
     }
-    // pause player until ffmpeg has been started
-    m_watcher.setSilent(true);
-    if (m_watcher.isPlaying()) {
-        m_watcher.pause();
+
+    if (!m_keepGoing) {
+        // pause player until ffmpeg has been started
+        m_watcher.setSilent(true);
+        if (m_watcher.isPlaying()) {
+            m_watcher.pause();
+        }
+        // terminate/kill the current process
+        stopFfmpeg();
     }
-    // terminate/kill the current process
-    stopFfmpeg();
+
     // determine output file, create target directory
     static const QString miscCategory(QStringLiteral("misc"));
     static const QString unknownTitle(QStringLiteral("unknown track"));
@@ -99,6 +105,7 @@ void FfmpegLauncher::nextSong()
     }
     QDir targetDir(m_targetDir);
     targetDir.cd(targetDirPath);
+
     // determine track number
     QString number, length, year, genre, totalTracks, totalDisks;
     if (m_watcher.trackNumber()) {
@@ -111,6 +118,7 @@ void FfmpegLauncher::nextSong()
     if (!number.isEmpty()) {
         number.append(QStringLiteral(" - "));
     }
+
     // read additional meta info
     //  - from an INI file called info.ini in the album directory (must be created before recording)
     //  - track lengths might be specified for each track in the [length] section (useful to get rid of advertisements at the end)
@@ -160,6 +168,7 @@ void FfmpegLauncher::nextSong()
             cerr << "Warning: Can't parse info.ini because an IO error occurred: " << failure.what() << endl;
         }
     }
+
     // determine target name/path
     QString targetName(
         QStringLiteral("%3%1%2").arg(m_watcher.title().isEmpty() ? unknownTitle : validFileName(m_watcher.title()), m_targetExtension, number));
@@ -170,6 +179,7 @@ void FfmpegLauncher::nextSong()
             = QStringLiteral("%3%1 (%4)%2").arg(m_watcher.title().isEmpty() ? unknownTitle : m_watcher.title(), m_targetExtension, number).arg(count);
     }
     auto targetPath = targetDir.absoluteFilePath(targetName);
+
     // set input device
     QStringList args;
     args << QStringLiteral("-f");
@@ -177,13 +187,16 @@ void FfmpegLauncher::nextSong()
     args << m_inputOptions;
     args << QStringLiteral("-i");
     args << m_sink;
+
     // set length if specified in info.ini
     if (!length.isEmpty() || !m_watcher.length().isNull()) {
         args << "-t";
         args << (length.isEmpty() ? QString::number(m_watcher.length().totalSeconds()) : length);
     }
+
     // set additional options
     args << m_options;
+
     // set meta data
     addMetaData(args, QStringLiteral("title"), m_watcher.title());
     addMetaData(args, QStringLiteral("album"), m_watcher.album());
@@ -198,27 +211,40 @@ void FfmpegLauncher::nextSong()
         addMetaData(args, QStringLiteral("disk"),
             totalDisks.isEmpty() ? QString::number(m_watcher.diskNumber()) : QString::number(m_watcher.diskNumber()) % QChar('/') % totalDisks);
     }
+
     // set output file
     args << targetPath;
     m_ffmpeg->setArguments(args);
     // start process
     m_ffmpeg->start();
-    // resume player
-    m_watcher.play();
-    m_watcher.setSilent(false);
+    if (!m_keepGoing) {
+        // resume player
+        m_watcher.play();
+        m_watcher.setSilent(false);
+    }
+    m_keepGoing = false;
+}
+
+void FfmpegLauncher::songResumed()
+{
+    if (m_ffmpeg->state() != QProcess::Running) {
+        m_keepGoing = true;
+        nextSong();
+    }
 }
 
 void FfmpegLauncher::stopFfmpeg()
 {
+    if (m_ffmpeg->state() == QProcess::NotRunning) {
+        return;
+    }
+    m_ffmpeg->terminate();
+    m_ffmpeg->waitForFinished(10000);
     if (m_ffmpeg->state() != QProcess::NotRunning) {
-        m_ffmpeg->terminate();
-        m_ffmpeg->waitForFinished(10000);
+        m_ffmpeg->kill();
+        m_ffmpeg->waitForFinished(5000);
         if (m_ffmpeg->state() != QProcess::NotRunning) {
-            m_ffmpeg->kill();
-            m_ffmpeg->waitForFinished(5000);
-            if (m_ffmpeg->state() != QProcess::NotRunning) {
-                throw runtime_error("Unable to terminate/kill ffmpeg process.");
-            }
+            throw runtime_error("Unable to terminate/kill ffmpeg process.");
         }
     }
 }

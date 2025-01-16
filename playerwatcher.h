@@ -37,13 +37,13 @@ public:
 
 Q_SIGNALS:
     void nextSong();
+    void songResumed();
     void playbackStarted();
     void playbackStopped();
 
 private Q_SLOTS:
     void serviceOwnerChanged(const QString &service, const QString &oldOwner, const QString &newOwner);
     void propertiesChanged();
-    void notificationReceived();
     void seeked(qlonglong pos);
 
 private:

@@ -23,6 +23,7 @@ public:
 
 private Q_SLOTS:
     void nextSong();
+    void songResumed();
     void stopFfmpeg();
     void ffmpegStarted();
     void ffmpegError();
@@ -36,6 +37,7 @@ private:
     QDir m_targetDir;
     QString m_targetExtension;
     QProcess *m_ffmpeg;
+    bool m_keepGoing;
 };
 
 inline void FfmpegLauncher::setSink(const QString &sinkName)

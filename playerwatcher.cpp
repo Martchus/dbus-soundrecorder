@@ -82,18 +82,13 @@ void PlayerWatcher::serviceOwnerChanged(const QString &service, const QString &o
 void PlayerWatcher::propertiesChanged()
 {
     // get meta data
-    QVariantMap metadata = m_playerInterface->metadata();
-    m_isAd = metadata.value(QStringLiteral("mpris:trackid")).toString().startsWith(QLatin1String("spotify:ad"));
-    QString title = metadata.value(QStringLiteral("xesam:title")).toString();
-    QString album = metadata.value(QStringLiteral("xesam:album")).toString();
-    QString artist = metadata.value(QStringLiteral("xesam:artist")).toString();
-    bool isPlaying;
-    if (m_ignorePlaybackStatus) {
-        // determine playback status by checking whether there is a song title
-        isPlaying = !title.isEmpty();
-    } else {
-        isPlaying = !m_playerInterface->playbackStatus().compare(QLatin1String("playing"), Qt::CaseInsensitive);
-    }
+    const QVariantMap metadata = m_playerInterface->metadata();
+    const QString title = metadata.value(QStringLiteral("xesam:title")).toString();
+    const QString album = metadata.value(QStringLiteral("xesam:album")).toString();
+    const QString artist = metadata.value(QStringLiteral("xesam:artist")).toString();
+    m_isAd = metadata.value(QStringLiteral("mpris:trackid")).toString().startsWith(QLatin1String("spotify:ad")) || title == QLatin1String("Advertisement");
+    // determine playback status by checking whether there is a song title when ignoring playback status
+    const bool isPlaying = m_ignorePlaybackStatus ? !title.isEmpty() : !m_playerInterface->playbackStatus().compare(QLatin1String("playing"), Qt::CaseInsensitive);
     if (isPlaying) {
         if (!m_isPlaying) {
             cerr << "Playback started" << endl;
@@ -130,6 +125,7 @@ void PlayerWatcher::propertiesChanged()
             if (!m_silent) {
                 m_isPlaying = true;
                 emit playbackStarted();
+                emit songResumed();
             }
         }
     } else if (m_isPlaying) {
@@ -139,11 +135,6 @@ void PlayerWatcher::propertiesChanged()
             emit playbackStopped();
         }
     }
-}
-
-void PlayerWatcher::notificationReceived()
-{
-    cout << "It works!" << endl;
 }
 
 void PlayerWatcher::seeked(qlonglong pos)
