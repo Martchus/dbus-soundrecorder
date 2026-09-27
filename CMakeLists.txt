@@ -12,6 +12,7 @@ set(META_APP_DESCRIPTION "Records sound from Pulse Audio with ffmpeg while watch
 set(META_VERSION_MAJOR 1)
 set(META_VERSION_MINOR 2)
 set(META_VERSION_PATCH 4)
+set(META_RELEASE_DATE "2026-09-27")
 
 # add project files
 set(HEADER_FILES
